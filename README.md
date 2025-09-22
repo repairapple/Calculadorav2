@@ -1,4 +1,4 @@
-# Calculadora - React
+# Calculadora Apple - React
 
 Este projeto é uma calculadora com design inspirado na calculadora da Apple, desenvolvida com React.
 
