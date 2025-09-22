@@ -88,9 +88,13 @@
 .button-zero {
   grid-column: span 2;
   border-radius: 2rem;
-  width: auto;
-  /* Garantir que o botão zero seja sempre visível */
-  min-width: calc(2 * 44px + 0.75rem);
+  width: auto !important;
+  /* Garantir que o botão zero seja sempre visível com especificidade alta */
+  min-width: calc(2 * 44px + 0.75rem) !important;
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Melhor responsividade para dispositivos móveis */
@@ -157,7 +161,8 @@
   
   /* Ajustar botão zero para mobile */
   .button-zero {
-    min-width: calc(2 * 48px + 0.8rem);
+    min-width: calc(2 * 48px + 0.8rem) !important;
+    width: auto !important;
   }
 }
 
@@ -186,6 +191,7 @@
   
   /* Ajustar botão zero para telas pequenas */
   .button-zero {
-    min-width: calc(2 * 44px + 0.6rem);
+    min-width: calc(2 * 44px + 0.6rem) !important;
+    width: auto !important;
   }
 }
