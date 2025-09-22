@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/repairapple/Calculadora.git/static/css/main.9c867047.css",
+    "main.js": "/repairapple/Calculadora.git/static/js/main.9a2efb38.js",
+    "static/js/453.97b90a09.chunk.js": "/repairapple/Calculadora.git/static/js/453.97b90a09.chunk.js",
+    "index.html": "/repairapple/Calculadora.git/index.html",
+    "main.9c867047.css.map": "/repairapple/Calculadora.git/static/css/main.9c867047.css.map",
+    "main.9a2efb38.js.map": "/repairapple/Calculadora.git/static/js/main.9a2efb38.js.map",
+    "453.97b90a09.chunk.js.map": "/repairapple/Calculadora.git/static/js/453.97b90a09.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.9c867047.css",
+    "static/js/main.9a2efb38.js"
+  ]
+}
