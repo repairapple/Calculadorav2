@@ -91,10 +91,49 @@
   width: auto;
 }
 
-@media (max-width: 480px) {
+/* Melhor responsividade para dispositivos móveis */
+@media (max-width: 768px) {
+  .calculator-container {
+    padding: 0.5rem;
+  }
+  
   .calculator {
-    max-width: 18rem;
+    max-width: 22rem;
+    padding: 1.25rem;
+  }
+  
+  .display-text {
+    font-size: 2.8rem;
+  }
+  
+  .button {
+    height: 4.5rem;
+    width: 4.5rem;
+    font-size: 1.4rem;
+    /* Melhor área de toque para mobile */
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  .buttons-grid {
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .calculator-container {
+    padding: 0.25rem;
+  }
+  
+  .calculator {
+    max-width: 20rem;
     padding: 1rem;
+    border-radius: 1.25rem;
+  }
+  
+  .display {
+    padding: 1.25rem;
+    margin-bottom: 0.75rem;
   }
   
   .display-text {
@@ -102,8 +141,39 @@
   }
   
   .button {
+    height: 4rem;
+    width: 4rem;
+    font-size: 1.3rem;
+    /* Garantir que os botões sejam visíveis e tocáveis */
+    min-height: 48px;
+    min-width: 48px;
+  }
+  
+  .buttons-grid {
+    gap: 0.8rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .calculator {
+    max-width: 18rem;
+    padding: 0.75rem;
+  }
+  
+  .display-text {
+    font-size: 2.2rem;
+  }
+  
+  .button {
     height: 3.5rem;
     width: 3.5rem;
-    font-size: 1.25rem;
+    font-size: 1.2rem;
+    /* Manter área mínima de toque */
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  .buttons-grid {
+    gap: 0.6rem;
   }
 }
