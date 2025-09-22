@@ -89,6 +89,8 @@
   grid-column: span 2;
   border-radius: 2rem;
   width: auto;
+  /* Garantir que o botão zero seja sempre visível */
+  min-width: calc(2 * 44px + 0.75rem);
 }
 
 /* Melhor responsividade para dispositivos móveis */
@@ -152,6 +154,11 @@
   .buttons-grid {
     gap: 0.8rem;
   }
+  
+  /* Ajustar botão zero para mobile */
+  .button-zero {
+    min-width: calc(2 * 48px + 0.8rem);
+  }
 }
 
 @media (max-width: 360px) {
@@ -175,5 +182,10 @@
   
   .buttons-grid {
     gap: 0.6rem;
+  }
+  
+  /* Ajustar botão zero para telas pequenas */
+  .button-zero {
+    min-width: calc(2 * 44px + 0.6rem);
   }
 }
