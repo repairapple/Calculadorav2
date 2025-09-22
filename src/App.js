@@ -98,10 +98,28 @@ export default function App() {
   };
 
   const handleClearClick = () => {
-    setDisplay('0');
-    setStoredValue(null);
-    setOperation(null);
-    setResetDisplay(false);
+    if (display === '0' && storedValue === null && operation === null) {
+      // Se já está limpo, não faz nada (AC)
+      return;
+    } else if (display !== '0' && storedValue !== null) {
+      // Se há operação em andamento, limpa apenas o display (C)
+      setDisplay('0');
+      setResetDisplay(false);
+    } else {
+      // Limpa tudo (AC)
+      setDisplay('0');
+      setStoredValue(null);
+      setOperation(null);
+      setResetDisplay(false);
+    }
+  };
+
+  // Função para determinar se deve mostrar AC ou C
+  const getClearButtonText = () => {
+    if (display === '0' && storedValue === null && operation === null) {
+      return 'AC';
+    }
+    return 'C';
   };
 
   const handlePlusMinusClick = () => {
@@ -146,7 +164,7 @@ export default function App() {
             onClick={handleClearClick}
             type="function"
           >
-            AC
+            {getClearButtonText()}
           </Button>
           <Button 
             onClick={handlePlusMinusClick}
