@@ -50,8 +50,10 @@
   width: 4rem;
   border: none;
   cursor: pointer;
-  transition: all 0.1s ease;
+  transition: transform 0.05s ease, background-color 0.05s ease;
   user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 .button:active {
@@ -63,8 +65,13 @@
   color: #000000;
 }
 
-.button-function:hover {
+.button-function:hover,
+.button-function:focus {
   background-color: #d4d4d4;
+}
+
+.button-function:active {
+  background-color: #8a8a8a;
 }
 
 .button-number {
@@ -72,8 +79,13 @@
   color: white;
 }
 
-.button-number:hover {
+.button-number:hover,
+.button-number:focus {
   background-color: #404040;
+}
+
+.button-number:active {
+  background-color: #262626;
 }
 
 .button-operator {
@@ -81,8 +93,13 @@
   color: white;
 }
 
-.button-operator:hover {
+.button-operator:hover,
+.button-operator:focus {
   background-color: #ffb143;
+}
+
+.button-operator:active {
+  background-color: #e6850e;
 }
 
 .button-zero {
@@ -154,6 +171,10 @@
     /* Garantir que os botões sejam visíveis e tocáveis */
     min-height: 48px;
     min-width: 48px;
+    /* Otimizações específicas para touch mobile */
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    transition: transform 0.05s ease, background-color 0.05s ease;
   }
   
   .buttons-grid {
@@ -204,6 +225,10 @@
     /* Área de toque otimizada para 6.1" */
     min-height: 50px;
     min-width: 50px;
+    /* Otimizações específicas para touch mobile */
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    transition: transform 0.05s ease, background-color 0.05s ease;
   }
   
   .buttons-grid {
@@ -235,6 +260,10 @@
     /* Manter área mínima de toque */
     min-height: 44px;
     min-width: 44px;
+    /* Otimizações específicas para touch mobile */
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    transition: transform 0.05s ease, background-color 0.05s ease;
   }
   
   .buttons-grid {
