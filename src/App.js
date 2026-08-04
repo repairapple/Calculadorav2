@@ -6,115 +6,110 @@ export default function App() {
   const [storedValue, setStoredValue] = useState(null);
   const [operation, setOperation] = useState(null);
   const [resetDisplay, setResetDisplay] = useState(false);
-
-  // Function to format numbers with thousand separators (dots)
-  const formatNumber = (num) => {
-    if (num === '0' || num === '') return '0';
-    
-    // Handle decimal numbers
-    if (num.includes('.')) {
-      const [integerPart, decimalPart] = num.split('.');
-      const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-      return `${formattedInteger},${decimalPart}`;
-    }
-    
-    // Format integer numbers with dots as thousand separators
-    return num.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-  };
-
-  // Function to remove formatting for calculations
-  const unformatNumber = (formattedNum) => {
-    return formattedNum.replace(/\./g, '').replace(',', '.');
-  };
+  const [activeOperation, setActiveOperation] = useState(null);
+  const [expression, setExpression] = useState('');
 
   const handleNumberClick = (num) => {
     if (display === '0' || resetDisplay) {
-      setDisplay(formatNumber(num));
+      if (num === '.') {
+        setDisplay('0.');
+        setExpression('0.');
+      } else {
+        setDisplay(num);
+        setExpression(prev => prev + num);
+      }
       setResetDisplay(false);
     } else {
-      const unformattedDisplay = unformatNumber(display);
-      const newValue = unformattedDisplay + num;
-      setDisplay(formatNumber(newValue));
-    }
-  };
-
-  const handleDecimalClick = () => {
-    if (resetDisplay) {
-      setDisplay('0,');
-      setResetDisplay(false);
-      return;
-    }
-    if (!display.includes(',')) {
-      setDisplay(display + ',');
+      if (num === '.' && display.includes('.')) return;
+      setDisplay(display + num);
+      setExpression(prev => prev + num);
     }
   };
 
   const handleOperationClick = (op) => {
-    const unformattedDisplay = unformatNumber(display);
     if (storedValue === null) {
-      setStoredValue(parseFloat(unformattedDisplay));
-    } else if (!resetDisplay) {
+      setStoredValue(parseFloat(display));
+    } else if (operation && !resetDisplay) {
       const result = calculate();
       setStoredValue(result);
-      setDisplay(formatNumber(String(result)));
+      setDisplay(String(result));
+      setExpression(String(result) + ' ' + op + ' ');
     }
+
+    if (storedValue === null || (operation && resetDisplay)) {
+      setExpression(display + ' ' + op + ' ');
+    }
+
     setOperation(op);
+    setActiveOperation(op);
     setResetDisplay(true);
   };
 
   const calculate = () => {
-    const unformattedDisplay = unformatNumber(display);
-    const currentValue = parseFloat(unformattedDisplay);
+    const currentValue = parseFloat(display);
     let result = 0;
-    
+    const previous = storedValue;
+
     switch (operation) {
       case '+':
-        result = storedValue + currentValue;
+        result = previous + currentValue;
         break;
       case '-':
-        result = storedValue - currentValue;
+        result = previous - currentValue;
         break;
       case '×':
-        result = storedValue * currentValue;
+        result = previous * currentValue;
         break;
       case '÷':
-        result = storedValue / currentValue;
+        result = previous / currentValue;
         break;
       default:
         return currentValue;
     }
-    
+
     return result;
   };
 
   const handleEqualsClick = () => {
-    if (operation === null || resetDisplay) return;
-    
+    if (operation === null) return;
+
     const result = calculate();
-    setDisplay(formatNumber(String(result)));
+    setDisplay(String(result));
+    setExpression(prev => prev + ' =');
     setStoredValue(null);
     setOperation(null);
+    setActiveOperation(null);
     setResetDisplay(true);
   };
 
   const handleClearClick = () => {
     if (display === '0' && storedValue === null && operation === null) {
-      // Se já está limpo, não faz nada (AC)
-      return;
-    } else if (display !== '0' && storedValue !== null) {
-      // Se há operação em andamento, limpa apenas o display (C)
-      setDisplay('0');
-      setResetDisplay(false);
-    } else {
-      // Limpa tudo (AC)
+      // AC: limpa tudo
       setDisplay('0');
       setStoredValue(null);
       setOperation(null);
+      setActiveOperation(null);
       setResetDisplay(false);
+      setExpression('');
+    } else {
+      // C: limpa só o display atual
+      setDisplay('0');
+      setResetDisplay(false);
+      // Remove só o último número da expressão
+      if (operation !== null) {
+        // Estamos no meio de uma operação: mantém "2 + " e limpa o segundo número
+        const lastSpace = expression.lastIndexOf(' ');
+        if (lastSpace > 0) {
+          setExpression(prev => prev.substring(0, lastSpace + 1));
+        } else {
+          setExpression('');
+        }
+      } else {
+        setExpression('');
+      }
     }
   };
 
-  // Função para determinar se deve mostrar AC ou C
   const getClearButtonText = () => {
     if (display === '0' && storedValue === null && operation === null) {
       return 'AC';
@@ -124,163 +119,144 @@ export default function App() {
 
   const handlePlusMinusClick = () => {
     if (display !== '0') {
-      const unformattedDisplay = unformatNumber(display);
-      const negativeValue = -parseFloat(unformattedDisplay);
-      setDisplay(formatNumber(String(negativeValue)));
+      const value = parseFloat(display);
+      const newVal = String(value * -1);
+      setDisplay(newVal);
+      // Replace last number in expression
+      if (expression) {
+        const parts = expression.split(' ');
+        if (parts.length > 0) {
+          parts[parts.length - 1] = newVal;
+          setExpression(parts.join(' '));
+        }
+      } else {
+        setExpression(newVal);
+      }
     }
   };
 
   const handlePercentageClick = () => {
-    const unformattedDisplay = unformatNumber(display);
-    const value = parseFloat(unformattedDisplay) / 100;
-    setDisplay(formatNumber(String(value)));
+    const value = parseFloat(display);
+    const newVal = String(value / 100);
+    setDisplay(newVal);
+    if (expression) {
+      const parts = expression.split(' ');
+      if (parts.length > 0) {
+        parts[parts.length - 1] = newVal;
+        setExpression(parts.join(' '));
+      }
+    } else {
+      setExpression(newVal);
+    }
   };
 
-  const Button = ({ children, onClick, className = "", type = "number" }) => (
+  const handleBackspace = () => {
+    if (display.length === 1 || (display.length === 2 && display.startsWith('-'))) {
+      setDisplay('0');
+    } else {
+      const newDisplay = display.slice(0, -1);
+      setDisplay(newDisplay);
+    }
+    // Remove last char from expression
+    if (expression) {
+      setExpression(prev => prev.trimEnd().slice(0, -1));
+    }
+  };
+
+  const getExpressionText = () => {
+    return expression || '\u00A0';
+  };
+
+  const getDisplayText = () => {
+    return display;
+  };
+
+  const Button = ({ children, onClick, className = "", type = "number", active = false }) => (
     <button
       onClick={onClick}
-      className={`button ${
-        type === 'function' ? 'button-function' : 
-        type === 'operator' ? 'button-operator' : 
-        'button-number'
-      } ${className}`}
+      className={`button ${type === 'function' ? 'button-function' :
+          type === 'operator' ? 'button-operator' :
+            'button-number'
+        } ${active ? 'active' : ''} ${className}`}
     >
-      {children}
+      <span>{children}</span>
     </button>
   );
 
   return (
     <div className="calculator-container">
       <div className="calculator">
-        {/* Display */}
         <div className="display">
-          <div className="display-text">{display}</div>
+          <div className="display-expression">{getExpressionText()}</div>
+          <div className="display-text">{getDisplayText()}</div>
         </div>
-        
-        {/* Buttons Grid */}
+
         <div className="buttons-grid">
           {/* Row 1 */}
-          <Button 
-            onClick={handleClearClick}
-            type="function"
-          >
+          <Button onClick={handleBackspace} type="function" className="button-backspace">
+            ⌫
+          </Button>
+          <Button onClick={handleClearClick} type="function">
             {getClearButtonText()}
           </Button>
-          <Button 
-            onClick={handlePlusMinusClick}
-            type="function"
-          >
-            +/-
-          </Button>
-          <Button 
-            onClick={handlePercentageClick}
-            type="function"
-          >
+          <Button onClick={handlePercentageClick} type="function">
             %
           </Button>
-          <Button 
+          <Button
             onClick={() => handleOperationClick('÷')}
             type="operator"
+            active={activeOperation === '÷'}
           >
             ÷
           </Button>
-          
+
           {/* Row 2 */}
-          <Button 
-            onClick={() => handleNumberClick('7')}
-            type="number"
-          >
-            7
-          </Button>
-          <Button 
-            onClick={() => handleNumberClick('8')}
-            type="number"
-          >
-            8
-          </Button>
-          <Button 
-            onClick={() => handleNumberClick('9')}
-            type="number"
-          >
-            9
-          </Button>
-          <Button 
+          <Button onClick={() => handleNumberClick('7')} type="number">7</Button>
+          <Button onClick={() => handleNumberClick('8')} type="number">8</Button>
+          <Button onClick={() => handleNumberClick('9')} type="number">9</Button>
+          <Button
             onClick={() => handleOperationClick('×')}
             type="operator"
+            active={activeOperation === '×'}
           >
             ×
           </Button>
-          
+
           {/* Row 3 */}
-          <Button 
-            onClick={() => handleNumberClick('4')}
-            type="number"
-          >
-            4
-          </Button>
-          <Button 
-            onClick={() => handleNumberClick('5')}
-            type="number"
-          >
-            5
-          </Button>
-          <Button 
-            onClick={() => handleNumberClick('6')}
-            type="number"
-          >
-            6
-          </Button>
-          <Button 
+          <Button onClick={() => handleNumberClick('4')} type="number">4</Button>
+          <Button onClick={() => handleNumberClick('5')} type="number">5</Button>
+          <Button onClick={() => handleNumberClick('6')} type="number">6</Button>
+          <Button
             onClick={() => handleOperationClick('-')}
             type="operator"
+            active={activeOperation === '-'}
           >
             -
           </Button>
-          
+
           {/* Row 4 */}
-          <Button 
-            onClick={() => handleNumberClick('1')}
-            type="number"
-          >
-            1
-          </Button>
-          <Button 
-            onClick={() => handleNumberClick('2')}
-            type="number"
-          >
-            2
-          </Button>
-          <Button 
-            onClick={() => handleNumberClick('3')}
-            type="number"
-          >
-            3
-          </Button>
-          <Button 
+          <Button onClick={() => handleNumberClick('1')} type="number">1</Button>
+          <Button onClick={() => handleNumberClick('2')} type="number">2</Button>
+          <Button onClick={() => handleNumberClick('3')} type="number">3</Button>
+          <Button
             onClick={() => handleOperationClick('+')}
             type="operator"
+            active={activeOperation === '+'}
           >
             +
           </Button>
-          
+
           {/* Row 5 */}
-          <Button 
-            onClick={() => handleNumberClick('0')}
-            type="number"
-            className="button-zero"
-          >
+          <Button onClick={() => handleNumberClick('0')} type="number">
             0
           </Button>
-          <Button 
-            onClick={handleDecimalClick}
-            type="number"
-          >
+          <Button onClick={handlePlusMinusClick} type="number">
+            +/-
+          </Button>
+          <Button onClick={() => handleNumberClick('.')} type="number">
             .
           </Button>
-          <Button 
-            onClick={handleEqualsClick}
-            type="operator"
-          >
+          <Button onClick={handleEqualsClick} type="operator">
             =
           </Button>
         </div>
